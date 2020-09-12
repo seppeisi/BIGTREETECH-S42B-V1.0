@@ -124,7 +124,7 @@ void usart_Receive_Process(void)
                 value_Temp|= Rx1_buff[5];
                 if(Rx1_buff[3]>=0xA0 && Rx1_buff[3]<=0xBF){
                     switch(Rx1_buff[3]){         //
-                        case 0xA0:
+                        case 0xA0:      //set Kp
                                 kp = value_Temp;
                                 table1[11]=kp;
                                 //printf("new kp = %d\r\n",kp);
@@ -133,7 +133,7 @@ void usart_Receive_Process(void)
                                 UART1_SendStr(Charbuff);
                                 UART1_SendStr("\r\n");    
                         break;
-                        case 0xA1:
+                        case 0xA1:      //set Ki
                                 ki = value_Temp;
                                 table1[12]=ki;
                                // printf("new ki = %d\r\n",ki);
@@ -141,8 +141,9 @@ void usart_Receive_Process(void)
                                 Uart_Data_Conversion(ki,2);
                                 UART1_SendStr(Charbuff);
                                 UART1_SendStr("\r\n");
-                            break;
-                        case 0xA2: kd = value_Temp;
+                            break;  
+                        case 0xA2:      //set Kd
+                                kd = value_Temp;
                                 table1[13]=kd;
                               //  printf("new kd = %d\r\n",kd);
                                 UART1_SendStr("new kd =");
@@ -157,7 +158,7 @@ void usart_Receive_Process(void)
                                 table1[1]=Currents;
                                 table1[2]=Menu_Num2_item;
                             break;                                      //
-                        case 0xA4:
+                        case 0xA4:     //set Microstepping
                                 PID_Cal_value_init();                   /**/
                                 stepangle = 64/value_Temp;
                                 //stepangle =Microstep_Set;              //
@@ -172,7 +173,7 @@ void usart_Receive_Process(void)
                                 }
                                 table1[4]=Menu_Num3_item;
                             break;
-                        case 0xA5:
+                        case 0xA5:        //set Enable Pin
                                 PID_Cal_value_init();                               //
                                 if(0xaa == value_Temp){
                                     Motor_ENmode_flag=0;Menu_Num4_item=1;           //
@@ -182,7 +183,7 @@ void usart_Receive_Process(void)
                                 table1[5]=Motor_ENmode_flag;                        //
                                 table1[6]=Menu_Num4_item;
                             break; 
-                        case 0xA6:                                                  //
+                        case 0xA6:      //set Motor Dir                                               //
                                 if(0x11 == value_Temp){
                                     Motor_Dir=1;Menu_Num5_item=0;                   //
                                 }else if(0x22 == value_Temp) {
@@ -191,7 +192,8 @@ void usart_Receive_Process(void)
                                 table1[7]=Motor_Dir;                                //
                                 table1[8]=Menu_Num5_item;
                             break; 
-                        case 0xB0: if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                        case 0xB0:      //Read PID
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                     UART1_SendStr("P ---- kp =");
                                     Uart_Data_Conversion(kp,3);
@@ -212,7 +214,8 @@ void usart_Receive_Process(void)
                                     UART1_SendStr("Read PID err\r\n");
                                 }
                             break;
-                        case 0xB1: if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                        case 0xB1:      //Read Current
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                     //printf("Currents =%d mA\r\n",(Currents>>3)*100);
                                     UART1_SendStr("Currents =");
@@ -223,7 +226,8 @@ void usart_Receive_Process(void)
                                     UART1_SendStr("Read Current err\r\n");
                                 }
                             break;
-                        case 0xB2: if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                        case 0xB2:      //Read Microstep
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                    // printf("Microstep =%d -->%d Gear\r\n",64/stepangle,16384/stepangle);
                                     UART1_SendStr("Microstep =");
@@ -237,7 +241,8 @@ void usart_Receive_Process(void)
                                     UART1_SendStr("Read Microstep err\r\n");
                                 }
                             break;
-                        case 0xB3: if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                        case 0xB3:      //Read Enable Pin Setting 
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                     if(1 == Motor_ENmode_flag){
                                        // printf(H_ENABLE_STATUS,Motor_ENmode_flag);
@@ -257,9 +262,9 @@ void usart_Receive_Process(void)
                                 }else{
                                     UART1_SendStr("Read enable err\r\n");
                                 }
-                            break;
-                                
-                        case 0xB4: if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                            break;                               
+                        case 0xB4:      //Read Motor Dir
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                     if(0 == Motor_Dir){
                                         UART1_SendStr("Dir =");
@@ -281,6 +286,17 @@ void usart_Receive_Process(void)
                                     UART1_SendStr("Read Dir err\r\n");
                                 }
                             break;
+
+                            case 0xB5:      //Testcommunication
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                                    t=1;
+                                    UART1_SendStr("Hello World\r\n");
+                                }else{
+                                    UART1_SendStr("Read Dir err\r\n");
+                                }
+                            break;
+
+
                         default: UART1_SendStr("Function Code Undefined\r\n");break;
                     }
                 }else{
