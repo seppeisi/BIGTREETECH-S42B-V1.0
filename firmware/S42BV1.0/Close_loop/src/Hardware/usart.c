@@ -286,17 +286,29 @@ void usart_Receive_Process(void)
                                     UART1_SendStr("Read Dir err\r\n");
                                 }
                             break;
-
                             case 0xB5:      //Testcommunication
                                 if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     t=1;
                                     UART1_SendStr("Hello World\r\n");
                                 }else{
-                                    UART1_SendStr("Read Dir err\r\n");
+                                    UART1_SendStr("Test err\r\n");
                                 }
                             break;
-
-
+                            case 0xB6:      //Kalibrieren
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                                    LL_TIM_DisableCounter(TIM1);
+                                    enmode=0;                       ////
+                                    NVIC_DisableIRQ(EXTI0_1_IRQn);
+                                    NVIC_DisableIRQ(EXTI2_3_IRQn);
+                                    Second_Calibrate_flag=1;                        //
+                                    SetModeCheck();             
+                                    NVIC_EnableIRQ(EXTI0_1_IRQn);
+                                    NVIC_EnableIRQ(EXTI2_3_IRQn);
+                                    Second_Menu=1;              //
+                                }else{
+                                    UART1_SendStr("Calibrate err\r\n");
+                                }
+                            break;
                         default: UART1_SendStr("Function Code Undefined\r\n");break;
                     }
                 }else{
