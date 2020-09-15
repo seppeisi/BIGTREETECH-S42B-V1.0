@@ -295,16 +295,17 @@ void usart_Receive_Process(void)
                                 }
                             break;
                             case 0xB6:      //Kalibrieren
+                            UART1_SendStr("Calibration startet please wait until the red light flashes. Then hit the Reset Button!\r\n");  
                                 if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
                                     LL_TIM_DisableCounter(TIM1);
                                     enmode=0;                       ////
                                     NVIC_DisableIRQ(EXTI0_1_IRQn);
                                     NVIC_DisableIRQ(EXTI2_3_IRQn);
                                     Second_Calibrate_flag=1;                        //
-                                    SetModeCheck();             
-                                    NVIC_EnableIRQ(EXTI0_1_IRQn);
+                                    SetModeCheck();                  
+                                    NVIC_EnableIRQ(EXTI0_1_IRQn);     
                                     NVIC_EnableIRQ(EXTI2_3_IRQn);
-                                    Second_Menu=1;              //
+                                    Second_Menu=1;            
                                 }else{
                                     UART1_SendStr("Calibrate err\r\n");
                                 }

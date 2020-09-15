@@ -509,15 +509,20 @@ int main(void)
     LL_Init();
     SystemClock_Config();
     MX_GPIO_Init();                           
-    OLED_Init();                                
-    OLED_ShowString(0,0,"Oled Init...OK");
+    //OLED_Init();                                
+    //OLED_ShowString(0,0,"Oled Init...OK");
     MX_SPI1_Init();
     MX_TIM3_Init();
    
-    LL_mDelay(100);
+    NVIC_EnableIRQ(EXTI0_1_IRQn);                               //
+    NVIC_EnableIRQ(EXTI2_3_IRQn);                               //
+    MX_USART1_UART_Init();                                      //USART Init
+    UART1_SendStr("MX_USART1_UART_Init OK\r\n");
 
-    OLED_Clear();                             
-    OLED_ShowString(0,0,"Close Loop Model");
+    //OLED_Clear();                             
+    //OLED_ShowString(0,0,"Close Loop Model");
+    UART1_SendStr("Close Loop Model\r\n");  
+    
 
 //    STMFLASH_Write(Data_Store_Arrdess,table,10);
 //    LL_mDelay(2);
@@ -527,14 +532,15 @@ int main(void)
     Calibration_flag = FlashReadHalfWord(Data_Store_Arrdess);
     FlashLock();
     if(Calibration_flag == 0xAA){
-        OLED_ShowString(0,25,"  Calibration  ");
-        OLED_ShowString(40,45,"  OK!");
+        //OLED_ShowString(0,25,"  Calibration  ");
+        //OLED_ShowString(40,45,"  OK!");
+        UART1_SendStr("Calibration Ok\r\n");  
         LL_mDelay(500);
         
-        OLED_Clear();   
-        OLED_ShowString(0,2,"Simp:  0000 RPM");
-        OLED_ShowString(0,22," Err:  000.00 ");
-        OLED_ShowString(0,42," Deg:  0000.0");
+        //OLED_Clear();   
+        //OLED_ShowString(0,2,"Simp:  0000 RPM");
+        //OLED_ShowString(0,22," Err:  000.00 ");
+        //OLED_ShowString(0,42," Deg:  0000.0");
         Menu_Num_item=2;                                        
         Second_Menu=1;                                          
         Menu_update_flag=0;                                    
@@ -567,24 +573,21 @@ int main(void)
         kd = table1[13];                //Kd
     }
     else{
-        OLED_ShowString(48,16,"NOT");
-        OLED_ShowString(16,32,"Calibration");
-        OLED_ShowString(0,48,"Please calibrate");
-        LL_mDelay(500);
+        //OLED_ShowString(48,16,"NOT");
+        //OLED_ShowString(16,32,"Calibration");
+        //OLED_ShowString(0,48,"Please calibrate");
+        UART1_SendStr("Not calibrated! Please run calibration with the Enter Key\r\n");  
+        UART1_SendStr("or with the Serial calibration command\r\n");  
+        //LL_mDelay(500);
         //
-        OLED_Clear();
-        OLED_ShowString(0,0,"->");
+        //OLED_Clear();
+        //OLED_ShowString(0,0,"->");
 
         while(1){//
             KeyScan();
-            Oled_display();
+            //Oled_display();
         }            
     }
-  
-    NVIC_EnableIRQ(EXTI0_1_IRQn);                               //
-    NVIC_EnableIRQ(EXTI2_3_IRQn);                               //
-    MX_USART1_UART_Init();                                      //USART Init
-    UART1_SendStr("MX_USART1_UART_Init OK\r\n");
     
     MX_TIM1_Init();                                             //Tim1  Init
     MX_TIM6_Init();                                             //Tim6  Init 
@@ -662,7 +665,7 @@ int main(void)
             NVIC_EnableIRQ(USART1_IRQn);
         }
         KeyScan();                                      
-        Oled_display();                                 
+        //Oled_display();                                 
         Motor_data_dis();                               
 
     }
@@ -740,7 +743,7 @@ void KeyScan(void)
             if(KEY_Back_flag ==0){
                 KEY_Back_flag=1;
                 Menu_update_flag=1;         //
-                OLED_Clear();                   //
+                //OLED_Clear();                   //
                 //
                 if(Enter_exit_flag == 1){
                     Enter_exit_flag=0;
@@ -783,7 +786,7 @@ void KeyScan(void)
                             case 1: Enter_exit_flag=1;    
                                     Menu_Num=1;           // 
                                     Menu_update_flag=1;   //
-                                    OLED_Clear();         //
+                                    //OLED_Clear();         //
                             break ;
                             case 2: 
                                     LL_TIM_DisableCounter(TIM1);
@@ -799,7 +802,7 @@ void KeyScan(void)
                                     Second_Menu=1;              //
                                 break ;
                             case 3:
-                                    OLED_Clear();   //
+                                    //OLED_Clear();   //
                                     Menu_update_flag=1;   //
                                     enter_num++;
                                     if(enter_num==1)
@@ -815,7 +818,8 @@ void KeyScan(void)
                                         table1[2]=Menu_Num2_item;
                                     }
                                 break ;
-                            case 4: OLED_Clear();   //
+                            case 4: 
+                                    //OLED_Clear();   //
                                     Menu_update_flag=1;   //
                                     enter_num++;
                                     if(enter_num==1)
@@ -833,7 +837,8 @@ void KeyScan(void)
                                         table1[4]=Menu_Num3_item;
                                     }
                                 break ;
-                            case 5: OLED_Clear();   //
+                            case 5: 
+                                    //OLED_Clear();   //
                                     Menu_update_flag=1;   //
                                     enter_num++;
                                     if(enter_num==1)
@@ -862,7 +867,7 @@ void KeyScan(void)
                                         }
                                     }
                                 break ;
-                            case 6: OLED_Clear();   //
+                            case 6: //OLED_Clear();   //
                                     Menu_update_flag=1;   //
                                     enter_num++;
                                     if(enter_num==1)
@@ -914,7 +919,7 @@ void KeyScan(void)
                             case 7:Enter_exit_flag=1;    
                                     Menu_Num=1;           //  
                                     Menu_update_flag=1;   //
-                                    OLED_Clear();         //
+                                    //OLED_Clear();         //
                                 break ;
                             default:break ;
                         }
@@ -1213,7 +1218,7 @@ static void MX_GPIO_Init(void)
   
 /***********************************************/  
 /***************oled IO**************************************/
-  GPIO_InitStruct.Pin = OLED_CS_Pin| OLED_RS_Pin |OLED_SCLK_Pin|OLED_SDIN_Pin;
+  /*GPIO_InitStruct.Pin = OLED_CS_Pin| OLED_RS_Pin |OLED_SCLK_Pin|OLED_SDIN_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -1226,7 +1231,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(OLED_RST_GPIO_Port, &GPIO_InitStruct);
-  
+  */
 /*************************************************/
   GPIO_InitStruct.Pin = LED_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
@@ -1346,7 +1351,7 @@ loop: if(CAL==0)
     if(CalibrateEncoder_finish_flag ==1){   
         CalibrateEncoder_finish_flag=0; 
         Second_Calibrate_flag=0;
-        Prompt_show();               //
+        //Prompt_show();               //
         for(;;){
             LED_F;
             LL_mDelay(200);
@@ -1754,11 +1759,11 @@ void CalibrateEncoder(void)
 //
 void Prompt_show(void)
 {
-    OLED_Clear();
+    //OLED_Clear();
     //OLED_ShowString(0,0,"              ");
-    OLED_ShowString(0,16,"   finished!  ");
-    OLED_ShowString(0,32,"  Please press ");
-    OLED_ShowString(0,48,"Reset Key reboot");
+    //OLED_ShowString(0,16,"   finished!  ");
+    //OLED_ShowString(0,32,"  Please press ");
+    //OLED_ShowString(0,48,"Reset Key reboot");
 }
 void _Error_Handler(char *file, int line)
 {
