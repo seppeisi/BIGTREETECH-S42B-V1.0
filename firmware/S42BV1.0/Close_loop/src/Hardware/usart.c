@@ -9,7 +9,7 @@ char Charbuff[16];
 //                
 struct __FILE 
 { 
-	int handle; 
+    int handle; 
 	/* Whatever you require here. If the only file you are using is */ 
 	/* standard output using printf() for debugging, no file handling */ 
 	/* is required. */ 

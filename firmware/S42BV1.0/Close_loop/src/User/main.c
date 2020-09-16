@@ -305,8 +305,6 @@ void WriteValue(uint16_t RegAdd,uint16_t RegValue);
 uint16_t ReadState(void);
 uint16_t ReadAngle(void);
 void CalibrateEncoder(void);
-void KeyScan(void);
-void Prompt_show(void);
 void restart_init(void);
 
 int16_t kp=30;                //
@@ -502,437 +500,114 @@ void STMFLASH_Write(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite)
 //
 int main(void)
 {
- 
-//    uint16_t table[10]={0xA,0xAA,0xAAA,0xB,5,6,7,8,9,10};
-    LL_Init();
-    SystemClock_Config();
-    MX_GPIO_Init();                           
-    //OLED_Init();                                
-    //OLED_ShowString(0,0,"Oled Init...OK");
-    MX_SPI1_Init();
-    MX_TIM3_Init();
-   
-    NVIC_EnableIRQ(EXTI0_1_IRQn);                               //
-    NVIC_EnableIRQ(EXTI2_3_IRQn);                               //
-    MX_USART1_UART_Init();                                      //USART Init
-    UART1_SendStr("MX_USART1_UART_Init OK\r\n");
+  LL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();                
+  MX_SPI1_Init();
+  MX_TIM3_Init();
 
-    //OLED_Clear();                             
-    //OLED_ShowString(0,0,"Close Loop Model");
-    UART1_SendStr("Close Loop Model\r\n");  
-    
-
-//    STMFLASH_Write(Data_Store_Arrdess,table,10);
-//    LL_mDelay(2);
-//    STMFLASH_Read(Data_Store_Arrdess,table1,10);
-//while(1);
-    FlashUnlock();
-    Calibration_flag = FlashReadHalfWord(Data_Store_Arrdess);
-    FlashLock();
-    if(Calibration_flag == 0xAA){
-        //OLED_ShowString(0,25,"  Calibration  ");
-        //OLED_ShowString(40,45,"  OK!");
-        UART1_SendStr("Calibration Ok\r\n");  
-        LL_mDelay(500);
+  NVIC_EnableIRQ(EXTI0_1_IRQn);                               //
+  NVIC_EnableIRQ(EXTI2_3_IRQn);                               //
+  MX_USART1_UART_Init();                                      //USART Init
+  UART1_SendStr("MX_USART1_UART_Init OK\r\n");
+  UART1_SendStr("Close Loop Model\r\n");  
+  FlashUnlock();
+  Calibration_flag = FlashReadHalfWord(Data_Store_Arrdess);
+  FlashLock();
+  if(Calibration_flag == 0xAA){
+    UART1_SendStr("Calibration Ok\r\n");  
+    LL_mDelay(500);
+    Menu_Num_item=2;                                        
+    Second_Menu=1;                                          
+    Menu_update_flag=0;                                    
+    Menu_Num=1;                                               
+    Reset_status_flag=1;                                    
+    STMFLASH_Read(Data_Store_Arrdess,table1,14);            
+    SetModeCheck();                 
+       
+    Currents=table1[1];             
+    Menu_Num2_item =table1[2];
+     
+    stepangle=table1[3];             
+    Menu_Num3_item=table1[4];        
+      
+    Motor_ENmode_flag =table1[5];    
+    Menu_Num4_item= table1[6];  
         
-        //OLED_Clear();   
-        //OLED_ShowString(0,2,"Simp:  0000 RPM");
-        //OLED_ShowString(0,22," Err:  000.00 ");
-        //OLED_ShowString(0,42," Deg:  0000.0");
-        Menu_Num_item=2;                                        
-        Second_Menu=1;                                          
-        Menu_update_flag=0;                                    
-        Menu_Num=1;                                               
-        Reset_status_flag=1;                                    
-//      Menu_Num2_item=8;                                       
-//      Motor_Enable = enmode;                                
-/*****************************************************/
-
-        STMFLASH_Read(Data_Store_Arrdess,table1,14);            
-        SetModeCheck();                 
-        
-        Currents=table1[1];             
-        Menu_Num2_item =table1[2];
-        
-        stepangle=table1[3];             
-        Menu_Num3_item=table1[4];        
-        
-        Motor_ENmode_flag =table1[5];    
-        Menu_Num4_item= table1[6];  
-        
-        Motor_Dir =table1[7];            
-        Menu_Num5_item =table1[8];
-        
-//        Motor_Dir =table1[9];           
-//        Menu_Num5_item =table1[10];
-
-        kp = table1[11];                //Kp
-        ki = table1[12];                //Ki
-        kd = table1[13];                //Kd
-    }
-    else{
-        //OLED_ShowString(48,16,"NOT");
-        //OLED_ShowString(16,32,"Calibration");
-        //OLED_ShowString(0,48,"Please calibrate");
-        UART1_SendStr("Not calibrated! Please run calibration with the Enter Key\r\n");  
-        UART1_SendStr("or with the Serial calibration command\r\n");  
-        //LL_mDelay(500);
-        //
-        //OLED_Clear();
-        //OLED_ShowString(0,0,"->");
-
-        while(1){//
-            KeyScan();
-            //Oled_display();
-        }            
-    }
-    
-    MX_TIM1_Init();                                             //Tim1  Init
-    MX_TIM6_Init();                                             //Tim6  Init 
-    MX_IWDG_Init();                                             //Idog  Init
-    while(1)
-    { 	
+    Motor_Dir =table1[7];            
+    Menu_Num5_item =table1[8];
+    kp = table1[11];                //Kp
+    ki = table1[12];                //Ki
+    kd = table1[13];                //Kd
+  }
+  else{
+    UART1_SendStr("Not calibrated! Please run calibration with the Enter Key\r\n");  
+    UART1_SendStr("or with the Serial calibration command\r\n");  
+    while(1){
+    }            
+  }   
+  MX_TIM1_Init();                                             //Tim1  Init
+  MX_TIM6_Init();                                             //Tim6  Init 
+  MX_IWDG_Init();                                             //Idog  Init
+  while(1){ 	
 /**************************************************************/
-        if(Motor_ENmode_flag ==1){
-            if(ENIN==1) {                            
-                restart_init();                              
-//                if(Reset_status_flag !=0 ){
-//                //LL_TIM_DisableCounter(TIM1);
-//                CLEAR_BIT(TIM1->CR1, TIM_CR1_CEN); 
-//                //LL_TIM_SetCounter(TIM1,0);
-////                WRITE_REG(TIM1->CNT, 0);                     
-//                  PID_Cal_value_init();           //
-//                    
-//                //LL_TIM_EnableCounter(TIM1);
-//                SET_BIT(TIM1->CR1, TIM_CR1_CEN);
-//                }
-//                enmode=1;
-//                Reset_status_flag=0;
-            }
-            else{
-                Reset_status_flag++;     //0++
-            }
-        }else if(Motor_ENmode_flag ==0){
-            if(ENIN==0){
-                restart_init(); //               
-//                if(Reset_status_flag !=0 ){         //
-//                    
-//                //LL_TIM_DisableCounter(TIM1);
-//                CLEAR_BIT(TIM1->CR1, TIM_CR1_CEN); 
-//                //LL_TIM_SetCounter(TIM1,0);
-////                WRITE_REG(TIM1->CNT, 0);   
-//                    PID_Cal_value_init();           //
-//                     
-//                //LL_TIM_EnableCounter(TIM1);
-//                    SET_BIT(TIM1->CR1, TIM_CR1_CEN);
-//                }
-//                enmode=1;                           // 
-//                Reset_status_flag=0;
-            }
-            else{
-                Reset_status_flag++;     //0++
-            }
-        }
-/*******************************************************************/
-        if(Reset_status_flag == 1){       
-            enmode=0;
-            Reset_status_flag ++;           //1++
-            WRITE_REG(TIM3->CCR1, 0);
-            WRITE_REG(TIM3->CCR2, 0);
-            
-            PID_Cal_value_init();           //
-                
-            wap1=0;
-            wap2=0;
-
-            Data_update_flag=1;
-        }else{
-            if(Reset_status_flag>3)
-                Reset_status_flag--;
-        }
-        usart_Receive_Process();                        
-        if(frame_Error_flag){
-            frame_Error_flag =0;
-             UART1_SendStr("Frame Err!\r\n");   
-        }
-        if(flash_store_flag ==1){
-            flash_store_flag =0;
-
-            NVIC_DisableIRQ(USART1_IRQn);
-            STMFLASH_Write(Data_Store_Arrdess,table1,14);//
-            NVIC_EnableIRQ(USART1_IRQn);
-        }
-        KeyScan();                                      
-        //Oled_display();                                 
-        //Motor_data_dis();                               
-
+    if(Motor_ENmode_flag ==1){
+      if(ENIN==1) {                            
+        restart_init();  
+      }else{
+        Reset_status_flag++;     //0++
+      }
+    }else{
+      if(ENIN==0){
+        restart_init(); //               
+      }else{
+        Reset_status_flag++;     //0++
+      }
     }
+/*******************************************************************/
+    if(Reset_status_flag == 1){       
+      enmode=0;
+      Reset_status_flag ++;           //1++
+      WRITE_REG(TIM3->CCR1, 0);
+      WRITE_REG(TIM3->CCR2, 0);
+          
+      PID_Cal_value_init();           //
+               
+      wap1=0;
+      wap2=0;
+
+      Data_update_flag=1;
+    }else{
+      if(Reset_status_flag>3)
+        Reset_status_flag--;
+    }
+    usart_Receive_Process();                        
+    if(frame_Error_flag){
+      frame_Error_flag =0;
+      UART1_SendStr("Frame Err!\r\n");   
+    }
+    if(flash_store_flag ==1){
+      flash_store_flag =0;
+      NVIC_DisableIRQ(USART1_IRQn);
+      STMFLASH_Write(Data_Store_Arrdess,table1,14);//
+      NVIC_EnableIRQ(USART1_IRQn);
+    }                                  
+  }
 }
 //Restart init 
 void restart_init(void)
 {
-    //
-    if(Reset_status_flag !=0 ){
+  if(Reset_status_flag !=0 ){
     //LL_TIM_DisableCounter(TIM1);
-        CLEAR_BIT(TIM1->CR1, TIM_CR1_CEN); 
+    CLEAR_BIT(TIM1->CR1, TIM_CR1_CEN); 
     //LL_TIM_SetCounter(TIM1,0);
-//      WRITE_REG(TIM1->CNT, 0);                     
-      PID_Cal_value_init();           //
-        
- //LL_TIM_EnableCounter(TIM1);
-        SET_BIT(TIM1->CR1, TIM_CR1_CEN);
-    }
-    enmode=1;
-    Reset_status_flag=0;
-}
-//Key Scan 
-void KeyScan(void)
-{
-    if(KEY_Select == 0){        //
-        LL_mDelay(10);
-        if(KEY_Select == 0){
-            if(Menu_Num ==0){//
-                if(KEY_Select_flag ==0){//
-                    KEY_Select_flag=1;
-                    Menu_update_flag=1;                 //
-                    
-                    if(Calibration_flag!=0xAA){         //
-                        Menu_Num_item++;                //
-                        if(Menu_Num_item>1)             //
-                            Menu_Num_item=0;
-                    }
-                    else if(Second_Menu==1){
-                            Menu_Num_item++;                //
-                            if(Menu_Num_item>MENU_NUM){            //
-                                Menu_Num_item =2;
-                        }
-                    }
-                    else if(Second_Menu==2){                //
-                            Menu_Num2_item++;
-                            if(Menu_Num2_item>33)
-                                Menu_Num2_item=0;
-                    }
-                    else if(Second_Menu==3){                //
-                            Menu_Num3_item++;
-                            if(Menu_Num3_item>4)
-                                Menu_Num3_item=0;
-                    }
-                    else if(Second_Menu==4){                //
-                            Menu_Num4_item++;
-                            if(Menu_Num4_item>1)
-                                Menu_Num4_item=0;
-                    }
-                    else if(Second_Menu==5){                //
-                            Menu_Num5_item++;
-                            if(Menu_Num5_item>1)
-                                Menu_Num5_item=0;
-                    }
-//                    else if(Second_Menu==6){                //
-//                            Menu_Num6_item++;
-//                            if(Menu_Num6_item>1)
-//                                Menu_Num6_item=0;
-//                    }
-                }
-            }
-        }
-    }else if(KEY_Back == 0){
-        LL_mDelay(10);
-        if(KEY_Back == 0){
-            if(KEY_Back_flag ==0){
-                KEY_Back_flag=1;
-                Menu_update_flag=1;         //
-                //OLED_Clear();                   //
-                //
-                if(Enter_exit_flag == 1){
-                    Enter_exit_flag=0;
-                    Menu_Num=0;                         //
-                    Menu_Num_item=2;                    //
-                    Second_Menu=1;
-                    //break;
-                }else {
-                    Menu_Num++;
-                    if(Menu_Num >1 ){
-                        Menu_Num=0;
-                    }
-                }
-            }
-        }
-    }else if(KEY_Confirm == 0){
-        LL_mDelay(10);
-        if(KEY_Confirm == 0){
-            if(KEY_Confirm_flag ==0){
-                KEY_Confirm_flag=1;
-                switch(Menu_Num){
-                    case 0:     
-                        switch(Menu_Num_item){                  //
-                            case 0:
-                                    SetModeCheck();             
-//                                    CalibrateEncoder_finish_flag=1; //
-//                                    //写flash  
-//                                    flash_store_flag =1;            //
-//                                    table1[0] =0xAA;
-//                                    Calibration_flag =0xAA;    //
-//                                    Second_Menu=1;             // 
-//                            
-//                                    OLED_Clear();   //
-//                                    OLED_ShowString(0,0,"->Calibrate");
-//                                    OLED_ShowString(0,16,"  Motor mA");
-//                                    OLED_ShowString(0,32,"  Microstep");
-//                                    OLED_ShowString(0,48,"  EnablePin");
-//                                    Menu_Num_item=2;                                //
-                            break;
-                            case 1: Enter_exit_flag=1;    
-                                    Menu_Num=1;           // 
-                                    Menu_update_flag=1;   //
-                                    //OLED_Clear();         //
-                            break ;
-                            case 2: 
-                                    LL_TIM_DisableCounter(TIM1);
-                                    enmode=0;                       ////
-                                    NVIC_DisableIRQ(EXTI0_1_IRQn);
-                                    NVIC_DisableIRQ(EXTI2_3_IRQn);
-                                    Second_Calibrate_flag=1;                        //
-
-                                    SetModeCheck();             
-                                    NVIC_EnableIRQ(EXTI0_1_IRQn);
-                                    NVIC_EnableIRQ(EXTI2_3_IRQn);
-//                                    LL_TIM_EnableCounter(TIM1);
-                                    Second_Menu=1;              //
-                                break ;
-                            case 3:
-                                    //OLED_Clear();   //
-                                    Menu_update_flag=1;   //
-                                    enter_num++;
-                                    if(enter_num==1)
-                                        Second_Menu=2;        //
-                                    if(enter_num==2){
-                                        enter_num=0;
-                                        Second_Menu=1;
-                                        //
-                                        //
-                                        Currents= Currents_Set;
-                                        flash_store_flag =1;
-                                        table1[1]=Currents;
-                                        table1[2]=Menu_Num2_item;
-                                    }
-                                break ;
-                            case 4: 
-                                    //OLED_Clear();   //
-                                    Menu_update_flag=1;   //
-                                    enter_num++;
-                                    if(enter_num==1)
-                                        Second_Menu=3;        //
-                                    if(enter_num==2){
-                                        enter_num=0;
-                                        Second_Menu=1;
-                                        enmode =0;                      //
-                                        PID_Cal_value_init();           /**/
-                                        //
-                                        stepangle =Microstep_Set;   //
-                                        
-                                        flash_store_flag =1;        //
-                                        table1[3]=stepangle;        //
-                                        table1[4]=Menu_Num3_item;
-                                    }
-                                break ;
-                            case 5: 
-                                    //OLED_Clear();   //
-                                    Menu_update_flag=1;   //
-                                    enter_num++;
-                                    if(enter_num==1)
-                                        Second_Menu=4;        //
-                                    if(enter_num==2){
-                                        enter_num=0;
-                                        Second_Menu=1;
-                                        enmode =0;                          //
-                                        PID_Cal_value_init();               //
-                                        //
-                                        if(Dir_Enable == 0xaa ){
-                                            //enmode =1;
-                                          Motor_ENmode_flag=0;
-                                        }else if(Dir_Enable == 0x55  ){
-                                            Motor_ENmode_flag=1;
-                                            //enmode =0;
-                                            //LL_TIM_OC_SetCompareCH1(TIM3,0);  
-                                            //LL_TIM_OC_SetCompareCH2(TIM3,0);  
-                                        }
-                                        if(Dir_Enable==0x55 || Dir_Enable ==0xAA){
-                                            Dir_Enable =0;
-                                            flash_store_flag =1;//
-                                            table1[5]=Motor_ENmode_flag;        //
-                                            table1[6]=Menu_Num4_item;
-                                            
-                                        }
-                                    }
-                                break ;
-                            case 6: //OLED_Clear();   //
-                                    Menu_update_flag=1;   //
-                                    enter_num++;
-                                    if(enter_num==1)
-                                        Second_Menu=5;        //
-                                    if(enter_num==2){
-                                        enter_num=0;
-                                        Second_Menu=1;
-                                        
-                                        //
-                                        //Dir_Enable  
-                                        if(Dir_Enable ==0x11){
-                                            Motor_Dir =1;
-                                        }else if(Dir_Enable == 0x22){
-                                            Motor_Dir=0;
-                                        }
-                                        //if(Dir_Enable ==0x11 || Dir_Enable==0x22){
-                                            Dir_Enable=0;
-                                        //}
-                                        flash_store_flag =1;//
-                                        table1[7]=Motor_Dir;                    //
-                                        table1[8]=Menu_Num5_item;
-                                    }
-                                break ;
-                                    
-//                            case 7:OLED_Clear();   //
-//                                    Menu_update_flag=1;   //
-//                                    enter_num++;
-//                                    if(enter_num==1)
-//                                        Second_Menu=6;        //
-//                                    if(enter_num==2){
-//                                        enter_num=0;
-//                                        Second_Menu=1;
-//                                        
-//                                        //Dir_Enable  
-//                                        if(Dir_Enable ==0x33){
-//                                            Motor_mode =0;
-//                                            closemode=1;        //
-//                                        }else if(Dir_Enable == 0x44){
-//                                            Motor_mode=1;
-//                                            closemode=0;        //
-//                                        }
-//                                        
-//                                        Dir_Enable=0;
-////                                        flash_store_flag =1;        //
-////                                        table1[9]=Motor_mode;        //
-////                                        table1[10]=Menu_Num6_item;
-//                                    }
-//                                break ;
-                            case 7:Enter_exit_flag=1;    
-                                    Menu_Num=1;           //  
-                                    Menu_update_flag=1;   //
-                                    //OLED_Clear();         //
-                                break ;
-                            default:break ;
-                        }
-                    break ;
-//                            case 1: Enter_exit_flag=1;    
-//                                
-//                            break ;
-                }
-            }
-        }
-    }else{
-        KEY_Select_flag=0;       //
-        KEY_Back_flag=0;         //
-        KEY_Confirm_flag=0;
-    }
+    //WRITE_REG(TIM1->CNT, 0);                     
+    PID_Cal_value_init();           //      
+    //LL_TIM_EnableCounter(TIM1);
+    SET_BIT(TIM1->CR1, TIM_CR1_CEN);
+  }
+  enmode=1;
+  Reset_status_flag=0;
 }
 
 static void LL_Init(void)
@@ -1306,59 +981,52 @@ void SetModeCheck(void)
   if(state&0x0080)//
   {
     for(uint8_t m=0;m<10;m++){
-      LED_H;
+    LED_H;
 	  LL_mDelay(200);
 	  LED_L;
 	  LL_mDelay(200);	
     } 
   }	
+  //Read Dipeinstellung für Schrittmotoren
   if(Calibration_flag !=0xAA){
-loop: if(CAL==0)
-        CalibrateEncoder();
-        if(1 != Second_Calibrate_flag){
-          if((SET1==1)&&(SET2==1))//
-            stepangle=16;//
-          else if((SET1==0)&&(SET2==1))
-            stepangle=8;//
-          else if((SET1==1)&&(SET2==0))
-            stepangle=4;//
-          else
-            stepangle=2;//
-        }
+    loop: if(CAL==0)
+    CalibrateEncoder();
+    if(1 != Second_Calibrate_flag){
+      if((SET1==1)&&(SET2==1))//
+        stepangle=16;//
+      else if((SET1==0)&&(SET2==1))
+        stepangle=8;//
+      else if((SET1==1)&&(SET2==0))
+        stepangle=4;//
+      else
+        stepangle=2;//
     }
-    else if(Calibration_flag == 0xAA && Second_Calibrate_flag ==1){
-//      Second_Calibrate_flag=0;
-      goto loop;
-    }
-    if(CLOSE==0 )//|| Motor_mode==0
-    {//
-        closemode=1;
+  }
+  else if(Calibration_flag == 0xAA && Second_Calibrate_flag ==1){
+    //Second_Calibrate_flag=0;
+    goto loop;
+  }
+  if(CLOSE==0 ){//|| Motor_mode==0
+    closemode=1;
     #if 1       
-        r=*(volatile uint16_t*)((ReadValue(READ_ANGLE_VALUE)>>1)*2+0x08008000); 
-        s_sum=r;   //
-        y=r;
-        y_1=y;
-        yw=y;  
-        yw_1=yw;
+      r=*(volatile uint16_t*)((ReadValue(READ_ANGLE_VALUE)>>1)*2+0x08008000); 
+      s_sum=r;   //
+      y=r;
+      y_1=y;
+      yw=y;  
+      yw_1=yw;
     #endif
+  }else{
+    closemode=0;
+  }
+  if(CalibrateEncoder_finish_flag ==1){   
+    CalibrateEncoder_finish_flag=0; 
+    Second_Calibrate_flag=0;
+    for(;;){
+      LED_F;
+      LL_mDelay(200);
     }
-    else{
-        closemode=0;
-    }
-
-    if(CalibrateEncoder_finish_flag ==1){   
-        CalibrateEncoder_finish_flag=0; 
-        Second_Calibrate_flag=0;
-        //Prompt_show();               //
-        for(;;){
-            LED_F;
-            LL_mDelay(200);
-        }
-    }
-//    else{
-//        NVIC_EnableIRQ(EXTI0_1_IRQn);
-//        NVIC_EnableIRQ(EXTI2_3_IRQn);
-//    }
+  }
 }
 
 void Output(int32_t theta,uint8_t effort) 
@@ -1385,28 +1053,22 @@ void Output(int32_t theta,uint8_t effort)
   v_coil_A=effort*sin_coil_A/1024;//
   v_coil_B=effort*sin_coil_B/1024;//
 	
-  if(v_coil_A>=0)  
-  {
+  if(v_coil_A>=0){
     LL_TIM_OC_SetCompareCH2(TIM3,v_coil_A);  
-	IN1_HIGH;  
+	  IN1_HIGH;  
     IN2_LOW;  
-  }
-  else  
-  {
+  }else{
     LL_TIM_OC_SetCompareCH2(TIM3,-v_coil_A);  
-	IN1_LOW;     
+    IN1_LOW;     
     IN2_HIGH;  
   } 
-  if(v_coil_B>=0)  
-  {
+  if(v_coil_B>=0){
     LL_TIM_OC_SetCompareCH1(TIM3,v_coil_B);  
-	IN3_HIGH;  
+	  IN3_HIGH;  
     IN4_LOW;  
-  }
-  else 
-  {
+  }else{
     LL_TIM_OC_SetCompareCH1(TIM3,-v_coil_B); 
-	IN3_LOW;     
+	  IN3_LOW;     
     IN4_HIGH;    
   }
 }
@@ -1435,11 +1097,10 @@ int16_t Mod(int32_t xMod,int16_t mMod)
 void UsDelay(uint16_t us)
 {
   us*=10;
-  while(us)	
-  {
+  while(us){
     __NOP();
-	__NOP();
-	us--;
+    __NOP();
+    us--;
   }
 }
 //
@@ -1449,13 +1110,11 @@ void FlashUnlock(void)
   FLASH->KEYR=FLASH_KEY2;
 }
 //
-void FlashLock(void)
-{
+void FlashLock(void){
   FLASH->CR|=1<<7; 
 }
 //
-uint8_t FlashGetStatus(void)
-{
+uint8_t FlashGetStatus(void){
   uint32_t res;
   res=FLASH->SR;
   if(res&(1<<0))//flash busy
@@ -1467,40 +1126,36 @@ uint8_t FlashGetStatus(void)
   return 0;     
 }
 
-uint8_t FlashWaitDone(uint16_t time)
-{
+uint8_t FlashWaitDone(uint16_t time){
   uint8_t res;
-  do
-  {
+  do{
     res=FlashGetStatus();
     if(res!=1)
 	  break;
-	UsDelay(1);	
+	  UsDelay(1);	
     time--;
-  }while(time);
+  }
+  while(time);
   if(time==0)
     res=0xff;
   return res;
 }
 //
-uint8_t FlashErasePage(uint32_t paddr)
-{
+uint8_t FlashErasePage(uint32_t paddr){
   uint8_t res=0;
   res=FlashWaitDone(0X5FFF);
-  if(res==0)
-  {
+  if(res==0){
     FLASH->CR|=1<<1; 
     FLASH->AR=paddr; 
     FLASH->CR|=1<<6; 
     res=FlashWaitDone(0X5FFF); 
     if(res!=1) 
-      FLASH->CR&=~(1<<1); 
+    FLASH->CR&=~(1<<1); 
   }
   return res;
 }
 //
-void FlashErase32K(void)
-{
+void FlashErase32K(void){
   FlashErasePage(0x08008000);
   FlashErasePage(0x08008400);
   FlashErasePage(0x08008800);
@@ -1535,31 +1190,26 @@ void FlashErase32K(void)
   FlashErasePage(0x0800FC00);
 }
 //
-uint8_t FlashWriteHalfWord(uint32_t faddr,uint16_t dat)
-{
+uint8_t FlashWriteHalfWord(uint32_t faddr,uint16_t dat){
   uint8_t  res;
   res=FlashWaitDone(0XFF);
-  if(res==0)
-  {
+  if(res==0){
     FLASH->CR|=1<<0;
     *(volatile uint16_t*)faddr=dat; 
     res=FlashWaitDone(0XFF);
-	if(res!=1)
-    {
+	if(res!=1){
       FLASH->CR&=~(1<<0); 
     }
   }
   return res;
 }
 //
-uint16_t FlashReadHalfWord(uint32_t faddr)
-{
+uint16_t FlashReadHalfWord(uint32_t faddr){
   return *(volatile uint16_t*)faddr;
 }
            
 //
-uint16_t ReadValue(uint16_t RegAdd)
-{
+uint16_t ReadValue(uint16_t RegAdd){
   uint16_t data;
   NSS_L;
   while(LL_SPI_IsActiveFlag_TXE(SPI1)==0);
@@ -1576,8 +1226,7 @@ uint16_t ReadValue(uint16_t RegAdd)
   return data;
 }
 //
-void WriteValue(uint16_t RegAdd,uint16_t RegValue)
-{
+void WriteValue(uint16_t RegAdd,uint16_t RegValue){
   NSS_L;
   while(LL_SPI_IsActiveFlag_TXE(SPI1)==0);
   LL_SPI_TransmitData16(SPI1,RegAdd);
@@ -1590,18 +1239,15 @@ void WriteValue(uint16_t RegAdd,uint16_t RegValue)
   NSS_H;
 }
 //
-uint16_t ReadState(void)
-{
+uint16_t ReadState(void){
   return (ReadValue(READ_STATUS));
 }
 //
-uint16_t ReadAngle(void)
-{
+uint16_t ReadAngle(void){
   return (ReadValue(READ_ANGLE_VALUE)>>1);
 }
 //
-void CalibrateEncoder(void) 
-{   
+void CalibrateEncoder(void) {   
   int32_t encoderReading=0;    
   int32_t currentencoderReading=0;
   int32_t lastencoderReading=0;        
@@ -1618,29 +1264,25 @@ void CalibrateEncoder(void)
 		
   dir=1; 
   Output(0,80);//
-  for(uint8_t m=0;m<4;m++)
-  {
+  for(uint8_t m=0;m<4;m++){
     LED_H;
-	LL_mDelay(250);
+	  LL_mDelay(250);
     LED_L;
-	LL_mDelay(250);	
+	  LL_mDelay(250);	
   } 
-  for(int16_t x=0;x<=199;x++)//
-  {    
+  for(int16_t x=0;x<=199;x++){    
     encoderReading=0;
    	LL_mDelay(20);                     
     lastencoderReading=ReadAngle();     
-    for(uint8_t reading=0;reading<10;reading++) 
-	{ 
+    for(uint8_t reading=0;reading<10;reading++){ 
       currentencoderReading=ReadAngle(); 
       if(currentencoderReading-lastencoderReading<-8192)
         currentencoderReading+=16384;
       else if(currentencoderReading-lastencoderReading>8192)
         currentencoderReading-=16384;
- 
-      encoderReading+=currentencoderReading;
-      LL_mDelay(10);
-      lastencoderReading=currentencoderReading;
+        encoderReading+=currentencoderReading;
+        LL_mDelay(10);
+        lastencoderReading=currentencoderReading;
     }
     encoderReading=encoderReading/10;
     if(encoderReading>16384)
@@ -1649,24 +1291,22 @@ void CalibrateEncoder(void)
       encoderReading+=16384;
     fullStepReadings[x]=encoderReading;  
     OneStep();
-	LL_mDelay(100); 
+	  LL_mDelay(100); 
   }
   dir=0; 
   OneStep();
   LL_mDelay(1000); 
-  for(int16_t x=199;x>=0;x--)//
-  {    
+  for(int16_t x=199;x>=0;x--){    
     encoderReading=0;
    	LL_mDelay(20);                     
     lastencoderReading=ReadAngle();     
     for(uint8_t reading=0;reading<10;reading++) 
 	{ 
-      currentencoderReading=ReadAngle(); 
-      if(currentencoderReading-lastencoderReading<-8192)
-        currentencoderReading+=16384;
-      else if(currentencoderReading-lastencoderReading>8192)
-        currentencoderReading-=16384;
- 
+    currentencoderReading=ReadAngle(); 
+    if(currentencoderReading-lastencoderReading<-8192)
+      currentencoderReading+=16384;
+    else if(currentencoderReading-lastencoderReading>8192)
+      currentencoderReading-=16384;
       encoderReading+=currentencoderReading;
       LL_mDelay(10);
       lastencoderReading=currentencoderReading;
@@ -1678,59 +1318,47 @@ void CalibrateEncoder(void)
       encoderReading+=16384;
     fullStepReadings[x]=(fullStepReadings[x]+encoderReading)/2;  
     OneStep();
-	LL_mDelay(100); 
+	  LL_mDelay(100); 
   }
   LL_TIM_OC_SetCompareCH1(TIM3,0);  
   LL_TIM_OC_SetCompareCH2(TIM3,0); 
-  for(uint8_t i=0;i<200;i++)//
-  {
+  for(uint8_t i=0;i<200;i++){
     ticks=fullStepReadings[(i+1)%200]-fullStepReadings[i%200];
     if(ticks<-15000) 
       ticks+=16384;
     else if(ticks>15000)	
 	  ticks-=16384;	
-    for(int32_t j=0;j<ticks;j++) 
-	{
+    for(int32_t j=0;j<ticks;j++){
       stepNo=(fullStepReadings[i]+j)%16384;
-      if(stepNo==0) 
-      {
-        iStart=i;
-        jStart=j;
+      if(stepNo==0){
+          iStart=i;
+          jStart=j;
       }
     }
   }
   FlashUnlock();
   FlashErase32K();
-  for(int32_t i=iStart;i<(iStart+200+1);i++)//
-  {
+  for(int32_t i=iStart;i<(iStart+200+1);i++){
 	ticks=fullStepReadings[(i+1)%200]-fullStepReadings[i%200];
     if(ticks<-15000) 
       ticks+=16384;         
-    if(i==iStart) 
-	{ 
-      for(int32_t j=jStart;j<ticks;j++) 
-	  {
+    if(i==iStart){ 
+      for(int32_t j=jStart;j<ticks;j++){
         lookupAngle=(8192*i+8192*j/ticks)%1638400/100;
-		FlashWriteHalfWord(address,(uint16_t)lookupAngle);
-		address+=2;
+        FlashWriteHalfWord(address,(uint16_t)lookupAngle);
+        address+=2;
       }
-    }
-    else if(i==(iStart+200)) 
-	{ 
-      for(int32_t j=0;j<jStart;j++) 
-	  {
+    }else if(i==(iStart+200)) { 
+      for(int32_t j=0;j<jStart;j++){
         lookupAngle=((8192*i+8192*j/ticks)%1638400)/100;
-		FlashWriteHalfWord(address,(uint16_t)lookupAngle);
-		address+=2;
+        FlashWriteHalfWord(address,(uint16_t)lookupAngle);
+        address+=2;
       }
-    }
-    else 
-	{                        //this is the general case
-      for(int32_t j=0;j<ticks;j++) 
-      {
+    }else{                        //this is the general case
+      for(int32_t j=0;j<ticks;j++){
         lookupAngle=((8192*i+8192*j/ticks)%1638400)/100;
-		FlashWriteHalfWord(address,(uint16_t)lookupAngle);
-		address+=2;
+        FlashWriteHalfWord(address,(uint16_t)lookupAngle);
+        address+=2;
       }
     }
   }
@@ -1754,15 +1382,7 @@ void CalibrateEncoder(void)
   
   CalibrateEncoder_finish_flag=1; //  
 }
-//
-void Prompt_show(void)
-{
-    //OLED_Clear();
-    //OLED_ShowString(0,0,"              ");
-    //OLED_ShowString(0,16,"   finished!  ");
-    //OLED_ShowString(0,32,"  Please press ");
-    //OLED_ShowString(0,48,"Reset Key reboot");
-}
+
 void _Error_Handler(char *file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
