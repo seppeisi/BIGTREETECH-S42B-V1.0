@@ -8,8 +8,6 @@
   ******************************************************************************
 **/
 #include "main.h"
-#include "oled.h"
-#include "display.h"
 #include "usart.h"
 
 //sin cos  
@@ -666,7 +664,7 @@ int main(void)
         }
         KeyScan();                                      
         //Oled_display();                                 
-        Motor_data_dis();                               
+        //Motor_data_dis();                               
 
     }
 }

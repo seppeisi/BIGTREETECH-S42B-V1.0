@@ -66,7 +66,7 @@
 #define KEY_Confirm_Pin         LL_GPIO_PIN_8       //
 #define KEY_Confirm_GPIO_Port    GPIOA 
 
-//------------------------------			   
+/*------------------------------			   
 #define OLED_CS_Pin             LL_GPIO_PIN_12		//
 #define OLED_CS_GPIO_Port       GPIOB
 #define OLED_RST_Pin            LL_GPIO_PIN_13 		//
@@ -78,7 +78,7 @@
 #define OLED_SCLK_GPIO_Port     GPIOB
 #define OLED_SDIN_Pin           LL_GPIO_PIN_14	    //
 #define OLED_SDIN_GPIO_Port     GPIOB
-
+*/
 
 #ifndef NVIC_PRIORITYGROUP_0
 #define NVIC_PRIORITYGROUP_0         ((uint32_t)0x00000007) /*!< 0 bit  for pre-emption priority,
@@ -126,7 +126,7 @@
 #define SPI_TX_OD  LL_GPIO_SetPinOutputType(MOSI_GPIO_Port, MOSI_Pin, LL_GPIO_OUTPUT_OPENDRAIN)
 #define SPI_TX_PP  LL_GPIO_SetPinOutputType(MOSI_GPIO_Port, MOSI_Pin, LL_GPIO_OUTPUT_PUSHPULL)
 
-/*******************OLED output Defined****************************/
+/*******************OLED output Defined****************************
 #define OLED_CS_H       LL_GPIO_SetOutputPin(OLED_CS_GPIO_Port, OLED_CS_Pin)  		//
 #define OLED_CS_L       LL_GPIO_ResetOutputPin(OLED_CS_GPIO_Port, OLED_CS_Pin)
 
@@ -141,7 +141,7 @@
 
 #define OLED_SDIN_H     LL_GPIO_SetOutputPin(OLED_SDIN_GPIO_Port,OLED_SDIN_Pin)	    //
 #define OLED_SDIN_L     LL_GPIO_ResetOutputPin(OLED_SDIN_GPIO_Port,OLED_SDIN_Pin)		//
-
+*/
 
 /* SPI command for TLE5012 */
 #define READ_STATUS				0x8001			//8000
