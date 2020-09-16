@@ -287,7 +287,7 @@ void usart_Receive_Process(void)
                                 }
                             break;
                             case 0xB5:      //Testcommunication
-                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){
                                     t=1;
                                     UART1_SendStr("Hello World\r\n");
                                 }else{
@@ -296,7 +296,7 @@ void usart_Receive_Process(void)
                             break;
                             case 0xB6:      //Kalibrieren
                             UART1_SendStr("Calibration startet please wait until the red light flashes. Then hit the Reset Button!\r\n");  
-                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){                     //
+                                if((Rx1_buff[4]==0xaa) && (Rx1_buff[5]== 0xaa)){
                                     LL_TIM_DisableCounter(TIM1);
                                     enmode=0;                       ////
                                     NVIC_DisableIRQ(EXTI0_1_IRQn);

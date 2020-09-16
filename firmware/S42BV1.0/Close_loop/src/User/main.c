@@ -406,12 +406,10 @@ int16_t value_Temp=0;
 //ReadAddr:
 //pBuffer:
 //NumToWrite:
-void STMFLASH_Read(uint32_t ReadAddr,uint16_t *pBuffer,uint16_t NumToRead)   	
-{
+void STMFLASH_Read(uint32_t ReadAddr,uint16_t *pBuffer,uint16_t NumToRead){
 	uint16_t i;
-	for(i=0;i<NumToRead;i++)
-	{
-        pBuffer[i]=FlashReadHalfWord(ReadAddr);//
+	for(i=0;i<NumToRead;i++){
+    pBuffer[i]=FlashReadHalfWord(ReadAddr);//
 		ReadAddr+=2;//
 	}
 }
@@ -419,13 +417,11 @@ void STMFLASH_Read(uint32_t ReadAddr,uint16_t *pBuffer,uint16_t NumToRead)
 //WriteAddr:
 //pBuffer:
 //NumToWrite:   
-void STMFLASH_Write_NoCheck(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite)   
-{ 			 		 
+void STMFLASH_Write_NoCheck(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite){ 			 		 
 	uint16_t i;
-	for(i=0;i<NumToWrite;i++)
-	{
+	for(i=0;i<NumToWrite;i++){
 		FlashWriteHalfWord(WriteAddr,pBuffer[i]);
-	    WriteAddr+=2;//
+	  WriteAddr+=2;//
 	}  
 } 
 
@@ -439,8 +435,7 @@ void STMFLASH_Write_NoCheck(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToW
 #define STM_SECTOR_SIZE	2048
 #endif		 
 uint16_t STMFLASH_BUF[STM_SECTOR_SIZE/2];//
-void STMFLASH_Write(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite)	
-{
+void STMFLASH_Write(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite){
 	uint32_t secpos;	   //
 	uint16_t secoff;	   //
 	uint16_t secremain; //
@@ -453,32 +448,31 @@ void STMFLASH_Write(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite)
 	secoff=(offaddr%STM_SECTOR_SIZE)/2;		//
 	secremain=STM_SECTOR_SIZE/2-secoff;		//   
 	if(NumToWrite<=secremain)secremain=NumToWrite;//
-	while(1) 
-	{	
+	while(1){	
 		STMFLASH_Read(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE,STMFLASH_BUF,STM_SECTOR_SIZE/2);//
-		for(i=0;i<secremain;i++)//
-		{
+		for(i=0;i<secremain;i++){
 			if(STMFLASH_BUF[secoff+i]!=0XFFFF)break;//
 		}
-		if(i<secremain)//
-		{
+		if(i<secremain){
 			FlashErasePage(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE);//
-			for(i=0;i<secremain;i++)//
-			{
+			for(i=0;i<secremain;i++){
 				STMFLASH_BUF[i+secoff]=pBuffer[i];	  
 			}
 			STMFLASH_Write_NoCheck(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE,STMFLASH_BUF,STM_SECTOR_SIZE/2);//  
 		}else STMFLASH_Write_NoCheck(WriteAddr,pBuffer,secremain);//
-		if(NumToWrite==secremain)break;//
-		else//
-		{
+		if(NumToWrite==secremain){
+      break;//
+		}else{
 			secpos++;				//
 			secoff=0;				// 	 
-		   	pBuffer+=secremain;  	
+		  pBuffer+=secremain;  	
 			WriteAddr+=secremain*2;	//   
-		   	NumToWrite-=secremain;	//
-			if(NumToWrite>(STM_SECTOR_SIZE/2))secremain=STM_SECTOR_SIZE/2;//
-			else secremain=NumToWrite;//
+		  NumToWrite-=secremain;	//
+			if(NumToWrite>(STM_SECTOR_SIZE/2)){
+        secremain=STM_SECTOR_SIZE/2;//
+      }else{
+        secremain=NumToWrite;//
+      }
 		}	 
 	};	
 	FlashLock();//
@@ -498,8 +492,7 @@ void STMFLASH_Write(uint32_t WriteAddr,uint16_t *pBuffer,uint16_t NumToWrite)
 //2019-11-19 
 //2020-01-03 
 //
-int main(void)
-{
+int main(void){
   LL_Init();
   SystemClock_Config();
   MX_GPIO_Init();                
@@ -539,10 +532,8 @@ int main(void)
     kp = table1[11];                //Kp
     ki = table1[12];                //Ki
     kd = table1[13];                //Kd
-  }
-  else{
-    UART1_SendStr("Not calibrated! Please run calibration with the Enter Key\r\n");  
-    UART1_SendStr("or with the Serial calibration command\r\n");  
+  }else{
+    UART1_SendStr("Not calibrated! Please run calibration with Serial calibration command\r\n");  
     while(1){
     }            
   }   
@@ -595,8 +586,7 @@ int main(void)
   }
 }
 //Restart init 
-void restart_init(void)
-{
+void restart_init(void){
   if(Reset_status_flag !=0 ){
     //LL_TIM_DisableCounter(TIM1);
     CLEAR_BIT(TIM1->CR1, TIM_CR1_CEN); 
@@ -610,8 +600,7 @@ void restart_init(void)
   Reset_status_flag=0;
 }
 
-static void LL_Init(void)
-{
+static void LL_Init(void){
   LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SYSCFG);
   NVIC_SetPriority(SVC_IRQn, 0);
   NVIC_SetPriority(PendSV_IRQn, 0);
@@ -619,33 +608,27 @@ static void LL_Init(void)
 }
 
 
-void SystemClock_Config(void)
-{
+void SystemClock_Config(void){
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
 	
-  if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1)
-  {
+  if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1){
     Error_Handler();  
   }
   LL_RCC_HSI_Enable();
   
-  while(LL_RCC_HSI_IsReady() != 1)
-  {}
+  while(LL_RCC_HSI_IsReady() != 1){}
   LL_RCC_HSI_SetCalibTrimming(16);
   LL_RCC_LSI_Enable();
-  while(LL_RCC_LSI_IsReady() != 1)
-  {}
+  while(LL_RCC_LSI_IsReady() != 1){}
   LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2, LL_RCC_PLL_MUL_12);
   LL_RCC_PLL_Enable();
 	  
-  while(LL_RCC_PLL_IsReady() != 1)
-  {}
+  while(LL_RCC_PLL_IsReady() != 1){}
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
 	  
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
-  {}
+  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL){}
   LL_Init1msTick(48000000);
   LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
   LL_SetSystemCoreClock(48000000);
@@ -653,20 +636,17 @@ void SystemClock_Config(void)
   NVIC_SetPriority(SysTick_IRQn, 0);
 }
 
-static void MX_IWDG_Init(void)
-{
+static void MX_IWDG_Init(void){
   LL_IWDG_Enable(IWDG);
   LL_IWDG_EnableWriteAccess(IWDG);
   LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_256);
   LL_IWDG_SetWindow(IWDG, 4095);
   LL_IWDG_SetReloadCounter(IWDG, 0xfff);
-  while (LL_IWDG_IsReady(IWDG) != 1)
-  {}
+  while (LL_IWDG_IsReady(IWDG) != 1){}
   LL_IWDG_ReloadCounter(IWDG);
 }
 //
-static void MX_SPI1_Init(void)
-{
+static void MX_SPI1_Init(void){
   LL_SPI_InitTypeDef SPI_InitStruct;
   LL_GPIO_InitTypeDef GPIO_InitStruct;
 	
@@ -718,8 +698,7 @@ static void MX_SPI1_Init(void)
   LL_SPI_Enable(SPI1); 
 }
 //
-static void MX_TIM1_Init(void)
-{
+static void MX_TIM1_Init(void){
   LL_TIM_InitTypeDef TIM_InitStruct = {0};
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -753,8 +732,7 @@ static void MX_TIM1_Init(void)
   LL_TIM_EnableCounter(TIM1);
 }
 //
-static void MX_TIM3_Init(void)
-{
+static void MX_TIM3_Init(void){
   LL_TIM_InitTypeDef TIM_InitStruct;
   LL_TIM_OC_InitTypeDef TIM_OC_InitStruct;
   LL_GPIO_InitTypeDef GPIO_InitStruct;
@@ -819,8 +797,7 @@ static void MX_TIM3_Init(void)
   LL_TIM_EnableCounter(TIM3);
 }
 //
-static void MX_TIM6_Init(void)
-{
+static void MX_TIM6_Init(void){
   LL_TIM_InitTypeDef TIM_InitStruct;
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
@@ -838,8 +815,7 @@ static void MX_TIM6_Init(void)
   LL_TIM_EnableCounter(TIM6);
 }
 
-static void MX_GPIO_Init(void)
-{
+static void MX_GPIO_Init(void){
   LL_GPIO_InitTypeDef GPIO_InitStruct;
   LL_EXTI_InitTypeDef EXTI_InitStruct;
 
@@ -974,17 +950,15 @@ static void MX_GPIO_Init(void)
 //  NVIC_DisableIRQ(EXTI2_3_IRQn);
 }
 
-void SetModeCheck(void)
-{
+void SetModeCheck(void){
   WriteValue(WRITE_MOD2_VALUE,MOD2_VALUE);
   uint16_t state=ReadState();//
-  if(state&0x0080)//
-  {
+  if(state&0x0080){
     for(uint8_t m=0;m<10;m++){
-    LED_H;
-	  LL_mDelay(200);
-	  LED_L;
-	  LL_mDelay(200);	
+      LED_H;
+      LL_mDelay(200);
+      LED_L;
+      LL_mDelay(200);	
     } 
   }	
   //Read Dipeinstellung für Schrittmotoren
@@ -1029,8 +1003,7 @@ void SetModeCheck(void)
   }
 }
 
-void Output(int32_t theta,uint8_t effort) 
-{	
+void Output(int32_t theta,uint8_t effort) {	
   int16_t v_coil_A;
   int16_t v_coil_B;
 
@@ -1073,29 +1046,27 @@ void Output(int32_t theta,uint8_t effort)
   }
 }
 //
-void OneStep(void)
-{          
-  if(dir) 
+void OneStep(void){          
+  if(dir){
     stepnumber+=1;
-  else 
+  }else{ 
     stepnumber-=1;
-  
+  }
   Output(81.92f*stepnumber,80);
   LL_mDelay(10);
 }
 //
-int16_t Mod(int32_t xMod,int16_t mMod) 
-{
+int16_t Mod(int32_t xMod,int16_t mMod){
   int16_t temp;
   temp=xMod%mMod;
-  if(temp<0)
+  if(temp<0){
     return (temp+mMod);
-  else
-	return  temp;
+  }else{
+	  return  temp;
+  }
 }
 
-void UsDelay(uint16_t us)
-{
+void UsDelay(uint16_t us){
   us*=10;
   while(us){
     __NOP();
@@ -1104,8 +1075,7 @@ void UsDelay(uint16_t us)
   }
 }
 //
-void FlashUnlock(void)
-{
+void FlashUnlock(void){
   FLASH->KEYR=FLASH_KEY1;
   FLASH->KEYR=FLASH_KEY2;
 }
@@ -1117,13 +1087,14 @@ void FlashLock(void){
 uint8_t FlashGetStatus(void){
   uint32_t res;
   res=FLASH->SR;
-  if(res&(1<<0))//flash busy
+  if(res&(1<<0)){//flash busy
     return 1; 
-  else if(res&(1<<2))  //Programming error
-	return 2; 
-  else if(res&(1<<4))  //
-	return 3; 
-  return 0;     
+  }else if(res&(1<<2)){  //Programming error
+	  return 2; 
+  }else if(res&(1<<4)){  //
+    return 3; 
+    return 0; 
+  }    
 }
 
 uint8_t FlashWaitDone(uint16_t time){
@@ -1300,16 +1271,15 @@ void CalibrateEncoder(void) {
     encoderReading=0;
    	LL_mDelay(20);                     
     lastencoderReading=ReadAngle();     
-    for(uint8_t reading=0;reading<10;reading++) 
-	{ 
-    currentencoderReading=ReadAngle(); 
-    if(currentencoderReading-lastencoderReading<-8192)
-      currentencoderReading+=16384;
-    else if(currentencoderReading-lastencoderReading>8192)
-      currentencoderReading-=16384;
-      encoderReading+=currentencoderReading;
-      LL_mDelay(10);
-      lastencoderReading=currentencoderReading;
+    for(uint8_t reading=0;reading<10;reading++){ 
+      currentencoderReading=ReadAngle(); 
+      if(currentencoderReading-lastencoderReading<-8192)
+        currentencoderReading+=16384;
+      else if(currentencoderReading-lastencoderReading>8192)
+        currentencoderReading-=16384;
+        encoderReading+=currentencoderReading;
+        LL_mDelay(10);
+        lastencoderReading=currentencoderReading;
     }
     encoderReading=encoderReading/10;
     if(encoderReading>16384)
@@ -1327,7 +1297,7 @@ void CalibrateEncoder(void) {
     if(ticks<-15000) 
       ticks+=16384;
     else if(ticks>15000)	
-	  ticks-=16384;	
+	    ticks-=16384;	
     for(int32_t j=0;j<ticks;j++){
       stepNo=(fullStepReadings[i]+j)%16384;
       if(stepNo==0){
