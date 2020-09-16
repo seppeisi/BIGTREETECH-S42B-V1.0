@@ -124,6 +124,12 @@
 #define SPI_TX_OD  LL_GPIO_SetPinOutputType(MOSI_GPIO_Port, MOSI_Pin, LL_GPIO_OUTPUT_OPENDRAIN)
 #define SPI_TX_PP  LL_GPIO_SetPinOutputType(MOSI_GPIO_Port, MOSI_Pin, LL_GPIO_OUTPUT_PUSHPULL)
 
+#define NSS2_H   LL_GPIO_SetOutputPin(NSS2_GPIO_Port, NSS2_Pin)  
+#define NSS2_L   LL_GPIO_ResetOutputPin(NSS2_GPIO_Port, NSS2_Pin) 
+
+#define SPI2_TX_OD  LL_GPIO_SetPinOutputType(MOSI2_GPIO_Port, MOSI2_Pin, LL_GPIO_OUTPUT_OPENDRAIN)
+#define SPI2_TX_PP  LL_GPIO_SetPinOutputType(MOSI2_GPIO_Port, MOSI2_Pin, LL_GPIO_OUTPUT_PUSHPULL)
+
 /*******************OLED output Defined****************************
 #define OLED_CS_H       LL_GPIO_SetOutputPin(OLED_CS_GPIO_Port, OLED_CS_Pin)  		//
 #define OLED_CS_L       LL_GPIO_ResetOutputPin(OLED_CS_GPIO_Port, OLED_CS_Pin)
@@ -160,6 +166,7 @@
 
 #define WRITE_IFAB_VALUE		0x50B1
 #define IFAB_VALUE 0x000D
+
 /* Functionality mode */
 #define REFERESH_ANGLE		0
 

@@ -475,6 +475,7 @@ typedef struct
 #define ADC_BASE              (APBPERIPH_BASE + 0x00012708)
 #define TIM1_BASE             (APBPERIPH_BASE + 0x00012C00)
 #define SPI1_BASE             (APBPERIPH_BASE + 0x00013000)
+#define SPI2_BASE             (APBPERIPH_BASE + 0x00013000)
 #define USART1_BASE           (APBPERIPH_BASE + 0x00013800)
 #define TIM15_BASE            (APBPERIPH_BASE + 0x00014000)
 #define TIM16_BASE            (APBPERIPH_BASE + 0x00014400)
