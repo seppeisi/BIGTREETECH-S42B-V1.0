@@ -66,19 +66,17 @@
 #define KEY_Confirm_Pin         LL_GPIO_PIN_8       //
 #define KEY_Confirm_GPIO_Port    GPIOA 
 
-/*------------------------------			   
-#define OLED_CS_Pin             LL_GPIO_PIN_12		//
-#define OLED_CS_GPIO_Port       GPIOB
-#define OLED_RST_Pin            LL_GPIO_PIN_13 		//
-#define OLED_RST_GPIO_Port      GPIOC
-#define OLED_RS_Pin             LL_GPIO_PIN_13		//
-#define OLED_RS_GPIO_Port       GPIOB
+//SPI2			   
+#define MISO2_Pin               LL_GPIO_PIN_12		//
+#define MISO2_GPIO_Port         GPIOB
+#define MOSI2_Pin               LL_GPIO_PIN_13 		//
+#define MOSI2_GPIO_Port         GPIOC
 
-#define OLED_SCLK_Pin           LL_GPIO_PIN_15		//
-#define OLED_SCLK_GPIO_Port     GPIOB
-#define OLED_SDIN_Pin           LL_GPIO_PIN_14	    //
-#define OLED_SDIN_GPIO_Port     GPIOB
-*/
+#define SCLK2_Pin               LL_GPIO_PIN_15		//
+#define SCL2K_GPIO_Port         GPIOB
+#define NSS2_Pin                LL_GPIO_PIN_14	    //
+#define NSS2_GPIO_Port          GPIOB
+
 
 #ifndef NVIC_PRIORITYGROUP_0
 #define NVIC_PRIORITYGROUP_0         ((uint32_t)0x00000007) /*!< 0 bit  for pre-emption priority,
