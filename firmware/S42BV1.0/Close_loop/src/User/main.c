@@ -278,6 +278,7 @@ static void LL_Init(void);
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_SPI2_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM6_Init(void);
@@ -497,6 +498,7 @@ int main(void){
   SystemClock_Config();
   MX_GPIO_Init();                
   MX_SPI1_Init();
+  MX_SPI2_Init();
   MX_TIM3_Init();
 
   NVIC_EnableIRQ(EXTI0_1_IRQn);                               //
@@ -704,42 +706,38 @@ static void MX_SPI2_Init(void){
 	
   LL_APB1_GRP2_EnableClock(LL_APB1_GRP1_PERIPH_SPI2);
 
-  /*
-  LL_SPI_InitTypeDef SPI_InitStruct;
-  LL_GPIO_InitTypeDef GPIO_InitStruct;
-	
-  LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SPI1);
+
   
-  /**SPI1 GPIO Configuration  
-  PA4   ------> SPI1_NSS
-  PA5   ------> SPI1_SCK
-  PA6   ------> SPI1_MISO
-  PA7   ------> SPI1_MOSI 
-  
+  /**SPI2 GPIO Configuration  
+  PB12   ------> SPI2_NSS
+  PB13   ------> SPI2_SCK
+  PB14   ------> SPI2_MISO
+  PB15   ------> SPI2_MOSI 
+  **/
 
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_0;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_6;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_14;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_0;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_7;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_15;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_0;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   SPI_InitStruct.TransferDirection = LL_SPI_FULL_DUPLEX;
   SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
@@ -751,10 +749,10 @@ static void MX_SPI2_Init(void){
   SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
   SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
   SPI_InitStruct.CRCPoly = 7;
-  LL_SPI_Init(SPI1, &SPI_InitStruct);
-  LL_SPI_SetStandard(SPI1, LL_SPI_PROTOCOL_MOTOROLA); 
-  LL_SPI_Enable(SPI1); 
-  */
+  LL_SPI_Init(SPI2, &SPI_InitStruct);
+  LL_SPI_SetStandard(SPI2, LL_SPI_PROTOCOL_MOTOROLA); 
+  LL_SPI_Enable(SPI2); 
+  
 }
 
 
